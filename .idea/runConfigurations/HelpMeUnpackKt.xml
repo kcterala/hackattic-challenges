@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="HelpMeUnpackKt" type="JetRunConfigurationType" nameIsGenerated="true">
+    <envs>
+      <env name="HACK_TOKEN" value="b091c7d489b7e75c" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="dev.kcterala.challenges.HelpMeUnpackKt" />
+    <module name="hackattic-challenges.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
