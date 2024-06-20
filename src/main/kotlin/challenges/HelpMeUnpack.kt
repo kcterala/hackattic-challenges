@@ -2,7 +2,9 @@ package dev.kcterala.challenges
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import dev.kcterala.client.ErrorResponse
 import dev.kcterala.client.HackAtticClient
+import dev.kcterala.client.SuccessResponse
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.Base64
@@ -27,12 +29,32 @@ data class SolutionData(
 
 
 fun main() {
-    val problemDataString = client.getProblemData(CHALLENGE_NAME)
+    val problemDataResponse = client.getProblemData(CHALLENGE_NAME)
+    val problemDataString: String
+    when (problemDataResponse) {
+        is ErrorResponse -> {
+            println(problemDataResponse.errorMessage)
+            return
+        }
+
+        is SuccessResponse -> {
+            problemDataString = problemDataResponse.data
+        }
+    }
+
     val problemData = objectMapper.readValue<ProblemData>(problemDataString)
     val solutionData = getDecodedData(problemData)
     val solutionDataString = objectMapper.writeValueAsString(solutionData)
-    val response = client.postSolution(CHALLENGE_NAME, solutionDataString)
-    println(response)
+    when (val postSolutionResponse = client.postSolution(CHALLENGE_NAME, solutionDataString)) {
+        is ErrorResponse -> {
+            println(postSolutionResponse.errorMessage)
+            return
+        }
+
+        is SuccessResponse -> {
+            println(postSolutionResponse.data)
+        }
+    }
 }
 
 
