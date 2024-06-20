@@ -30,7 +30,7 @@ data class SolutionData(
 
 fun main() {
     val problemDataResponse = client.getProblemData(CHALLENGE_NAME)
-    val problemDataString: String
+    val problemData : ProblemData
     when (problemDataResponse) {
         is ErrorResponse -> {
             println(problemDataResponse.errorMessage)
@@ -38,23 +38,13 @@ fun main() {
         }
 
         is SuccessResponse -> {
-            problemDataString = problemDataResponse.data
+            problemData = objectMapper.readValue(problemDataResponse.data)
         }
     }
 
-    val problemData = objectMapper.readValue<ProblemData>(problemDataString)
     val solutionData = getDecodedData(problemData)
-    val solutionDataString = objectMapper.writeValueAsString(solutionData)
-    when (val postSolutionResponse = client.postSolution(CHALLENGE_NAME, solutionDataString)) {
-        is ErrorResponse -> {
-            println(postSolutionResponse.errorMessage)
-            return
-        }
-
-        is SuccessResponse -> {
-            println(postSolutionResponse.data)
-        }
-    }
+    val postResponse = challenges.client.postSolution(challenges.CHALLENGE_NAME, challenges.objectMapper.writeValueAsString(solutionData))
+    println(postResponse)
 }
 
 

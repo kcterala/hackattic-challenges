@@ -32,7 +32,7 @@ class HackAtticClient {
     }
 
     fun postSolution(challengeName: String, challengeData: String) : ApiResponse<String> {
-        val url = "$BASE_URL$challengeName/solve?access_token=$TOKEN"
+        val url = "$BASE_URL$challengeName/solve?access_token=$TOKEN&playground=1"
         val request = HttpRequest.newBuilder()
             .POST(HttpRequest.BodyPublishers.ofString(challengeData))
             .uri(URI.create(url))

@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.1")
+    implementation("org.postgresql:postgresql:42.2.24")
     testImplementation(kotlin("test"))
 }
 
