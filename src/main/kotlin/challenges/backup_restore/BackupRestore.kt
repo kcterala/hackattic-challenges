@@ -1,19 +1,17 @@
-package challenges
+package challenges.backup_restore
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.kcterala.challenges.SolutionData
 import dev.kcterala.client.ErrorResponse
-import dev.kcterala.client.HackAtticClient
+import dev.kcterala.client.HackAtticUtils
 import dev.kcterala.client.SuccessResponse
+import enums.CHALLENGE
 import java.io.*
 import java.sql.DriverManager
 import java.util.Base64
 import java.util.zip.GZIPInputStream
 
 
-val client = HackAtticClient()
-val CHALLENGE_NAME = "backup_restore"
 val objectMapper = jacksonObjectMapper()
 
 data class ProblemData(
@@ -25,7 +23,7 @@ data class SolutionData(
 )
 
 fun main() {
-    val problemDataResponse = client.getProblemData(CHALLENGE_NAME)
+    val problemDataResponse = HackAtticUtils.getProblemData(CHALLENGE.BACKUP_RESTORE)
     val problemData: ProblemData
     when (problemDataResponse) {
         is ErrorResponse -> {
@@ -40,12 +38,12 @@ fun main() {
 
 
     val solutionData = SolutionData(getListOfSSN(problemData))
-    val postResponse = client.postSolution(CHALLENGE_NAME, objectMapper.writeValueAsString(solutionData))
+    val postResponse = HackAtticUtils.postSolution(CHALLENGE.BACKUP_RESTORE, objectMapper.writeValueAsString(solutionData))
     println(postResponse)
 
 }
 
-fun getListOfSSN(problemData: ProblemData): List<String> {
+private fun getListOfSSN(problemData: ProblemData): List<String> {
     val dumpBytes = Base64.getDecoder().decode(problemData.dump)
     val fileName = "query.sql"
     val file = File(fileName)

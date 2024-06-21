@@ -3,14 +3,13 @@ package dev.kcterala.challenges
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.kcterala.client.ErrorResponse
-import dev.kcterala.client.HackAtticClient
+import dev.kcterala.client.HackAtticUtils
 import dev.kcterala.client.SuccessResponse
+import enums.CHALLENGE
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.Base64
 
-val client = HackAtticClient()
-val CHALLENGE_NAME = "help_me_unpack"
 val objectMapper = jacksonObjectMapper()
 
 data class ProblemData(
@@ -29,7 +28,7 @@ data class SolutionData(
 
 
 fun main() {
-    val problemDataResponse = client.getProblemData(CHALLENGE_NAME)
+    val problemDataResponse = HackAtticUtils.getProblemData(CHALLENGE.HELP_ME_UNPACK)
     val problemData : ProblemData
     when (problemDataResponse) {
         is ErrorResponse -> {
@@ -43,12 +42,12 @@ fun main() {
     }
 
     val solutionData = getDecodedData(problemData)
-    val postResponse = challenges.client.postSolution(challenges.CHALLENGE_NAME, challenges.objectMapper.writeValueAsString(solutionData))
+    val postResponse = HackAtticUtils.postSolution(CHALLENGE.HELP_ME_UNPACK, challenges.backup_restore.objectMapper.writeValueAsString(solutionData))
     println(postResponse)
 }
 
 
-fun getDecodedData(data: ProblemData) : SolutionData {
+private fun getDecodedData(data: ProblemData) : SolutionData {
     val decodedBytes = Base64.getDecoder().decode(data.bytes)
     val buffer = ByteBuffer.wrap(decodedBytes).order(ByteOrder.LITTLE_ENDIAN)
 

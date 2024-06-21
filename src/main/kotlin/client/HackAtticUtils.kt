@@ -1,5 +1,8 @@
 package dev.kcterala.client
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import enums.CHALLENGE
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -12,13 +15,13 @@ data class SuccessResponse<T>(val data: T) : ApiResponse<T>()
 data class ErrorResponse(val errorMessage: String) : ApiResponse<Nothing>()
 
 
-class HackAtticClient {
+object HackAtticUtils {
     val BASE_URL = "https://hackattic.com/challenges/"
     val TOKEN = System.getenv("HACK_TOKEN")
     val client = HttpClient.newHttpClient()
 
-    fun getProblemData(challengeName: String) : ApiResponse<String> {
-        val url = "$BASE_URL$challengeName/problem?access_token=$TOKEN"
+    fun getProblemData(challenge: CHALLENGE) : ApiResponse<String> {
+        val url = "$BASE_URL${challenge.value}/problem?access_token=$TOKEN"
         val request = HttpRequest.newBuilder()
             .GET()
             .uri(URI.create(url))
@@ -31,8 +34,8 @@ class HackAtticClient {
         return SuccessResponse(response.body())
     }
 
-    fun postSolution(challengeName: String, challengeData: String) : ApiResponse<String> {
-        val url = "$BASE_URL$challengeName/solve?access_token=$TOKEN&playground=1"
+    fun postSolution(challenge: CHALLENGE, challengeData: String) : ApiResponse<String> {
+        val url = "$BASE_URL${challenge.value}/solve?access_token=$TOKEN&playground=1"
         val request = HttpRequest.newBuilder()
             .POST(HttpRequest.BodyPublishers.ofString(challengeData))
             .uri(URI.create(url))
