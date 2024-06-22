@@ -3,10 +3,12 @@ package dev.kcterala.client
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import enums.CHALLENGE
+import java.io.File
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.file.Paths
 
 sealed class ApiResponse<out T>
 
@@ -46,6 +48,20 @@ object HackAtticUtils {
             return ErrorResponse(response.body())
         }
         return SuccessResponse(response.body())
+    }
+
+    fun getFile(zipUrl: String): ApiResponse<String> {
+        val filePath = "file.zip"
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create(zipUrl))
+            .GET()
+            .build()
+
+        val response = client.send(request, HttpResponse.BodyHandlers.ofFile(Paths.get(filePath)))
+        if (response.statusCode() != 200) {
+            return ErrorResponse("Can't download the zip file")
+        }
+        return SuccessResponse(filePath)
     }
 
 }
